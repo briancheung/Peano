@@ -1,0 +1,4 @@
+# Peano
+Peano - Parameterize thEANO
+
+A library providing theano ops which also have learnable parameters.
