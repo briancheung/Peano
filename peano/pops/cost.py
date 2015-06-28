@@ -10,6 +10,9 @@ def cross_entropy(y_true, y_pred):
 def mean_squared_error(y_true, y_pred):
     return 0.5*T.sqr(y_pred - y_true).mean()
 
+def misclass_error(y_true, y_pred):
+    return T.neq(T.argmax(y_true, axis=1), T.argmax(y_pred, axis=1)).mean()
+
 def xcov(actset_1, actset_2):
     N = actset_1.shape[0].astype(theano.config.floatX)
     actset_1 = actset_1-actset_1.mean(axis=0, keepdims=True)
