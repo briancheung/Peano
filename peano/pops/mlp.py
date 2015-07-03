@@ -13,6 +13,9 @@ def rectify(x):
 def batch_normalize(x, epsilon=1e-6):
     return (x - x.mean(-2, keepdims=True))/(x.std(-2, keepdims=True) + epsilon)
 
+def stable_softmax(x):
+    return T.nnet.softmax(x - x.max(axis=1, keepdims=True))
+
 class Sequential(Pop):
     def __init__(self, name):
         self.params = []
