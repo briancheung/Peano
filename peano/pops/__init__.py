@@ -1,2 +1,2 @@
-from . import mlp
+from . import nnet
 from . import cost

@@ -7,9 +7,6 @@ from pop import Pop
 
 dtype = theano.config.floatX
 
-def rectify(x):
-    return T.maximum(x, 0)
-
 def batch_normalize(x, epsilon=1e-6):
     return (x - x.mean(-2, keepdims=True))/(x.std(-2, keepdims=True) + epsilon)
 
