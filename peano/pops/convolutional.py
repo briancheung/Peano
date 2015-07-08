@@ -20,5 +20,8 @@ class Conv2D(Pop):
 
     def apply(self, x):
         # x: (n_batch, stack_size, n_row, n_col)
-        conv_val = T.nnet.conv.conv2d(x, self.W, border_mode=self.border_mode, subsample=self.stride)
+        # conv2d may fallback  to super slow CPU conv when subsample != (1,1), better
+        # to force using cuDNN for now
+        # conv_val = T.nnet.conv.conv2d(x, self.W, border_mode=self.border_mode, subsample=self.stride)
+        conv_val = theano.sandbox.cuda.dnn.dnn_conv(x, self.W, border_mode=self.border_mode, subsample=self.stride)
         return conv_val + self.b.dimshuffle(0,'x','x')
