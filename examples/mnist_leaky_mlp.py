@@ -1,5 +1,7 @@
 '''
-Example of how to build a multilayer perceptron to classify MNIST digits
+Demo of how to use lambda functions (anonymous functions) to tightly
+integrate theano calls into peano. Anonymous functions enables peano 
+to support new theano functions without modification.
 '''
 
 import time
@@ -13,9 +15,9 @@ dtype = theano.config.floatX
 
 mnist_net = P.nnet.Sequential('mnist_net')
 mnist_net.add(P.nnet.Linear(784, 500))
-mnist_net.add(T.nnet.relu)
+mnist_net.add(lambda x: T.nnet.relu(x, alpha=.1))
 mnist_net.add(P.nnet.Linear(500, 500))
-mnist_net.add(T.nnet.relu)
+mnist_net.add(lambda x: T.nnet.relu(x, alpha=.1))
 mnist_net.add(P.nnet.Linear(500, 10))
 mnist_net.add(P.nnet.BatchNormalization(10))
 mnist_net.add(T.nnet.softmax)
