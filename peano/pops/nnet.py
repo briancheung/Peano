@@ -6,12 +6,17 @@ from utils import sample_weights
 from pop import Pop
 
 dtype = theano.config.floatX
+from theano.sandbox.rng_mrg import MRG_RandomStreams as RandomStreams
+srng = RandomStreams(seed=np.random.randint(10e6))
 
 def batch_normalize(x, epsilon=1e-6):
     return (x - x.mean(-2, keepdims=True))/(x.std(-2, keepdims=True) + epsilon)
 
 def stable_softmax(x):
     return T.nnet.softmax(x - x.max(axis=1, keepdims=True))
+
+def dropout(x, drop_probability=.5):
+    return x*srng.binomial(x.shape, p=1.-drop_probability, dtype=dtype)/drop_probability
 
 class Sequential(Pop):
     def __init__(self, name):
