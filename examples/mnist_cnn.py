@@ -21,6 +21,7 @@ mnist_net.add(lambda x: downsample.max_pool_2d(x, (2,2)))
 mnist_net.add(T.nnet.relu)
 mnist_net.add(lambda x: T.reshape(x, (x.shape[0], x.shape[1]*x.shape[2]*x.shape[3]) ))
 mnist_net.add(P.nnet.Linear(32*5*5, 10))
+mnist_net.add(P.nnet.BatchNormalization(10))
 mnist_net.add(P.nnet.logsoftmax)
 
 v = T.tensor4(dtype=dtype)
