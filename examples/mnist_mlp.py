@@ -18,13 +18,13 @@ mnist_net.add(P.nnet.Linear(500, 500))
 mnist_net.add(T.nnet.relu)
 mnist_net.add(P.nnet.Linear(500, 10))
 mnist_net.add(P.nnet.BatchNormalization(10))
-mnist_net.add(T.nnet.softmax)
+mnist_net.add(P.nnet.logsoftmax)
 
 v = T.matrix(dtype=dtype)
 y_true = T.matrix(dtype=dtype)
 y_s = mnist_net.apply(v)
 
-cost = T.nnet.categorical_crossentropy(y_s, y_true).mean()
+cost = P.cost.cross_entropy_logdomain(y_true, y_s)
 misclass_cost = T.neq(T.argmax(y_true, axis=1), T.argmax(y_s, axis=1)).mean()
 
 params = mnist_net.params

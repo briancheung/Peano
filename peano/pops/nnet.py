@@ -12,8 +12,9 @@ srng = RandomStreams(seed=np.random.randint(10e6))
 def batch_normalize(x, epsilon=1e-6):
     return (x - x.mean(-2, keepdims=True))/(x.std(-2, keepdims=True) + epsilon)
 
-def stable_softmax(x):
-    return T.nnet.softmax(x - x.max(axis=1, keepdims=True))
+def logsoftmax(x):
+    xdev = x - x.max(axis=1, keepdims=True)
+    return xdev - T.log(T.sum(T.exp(xdev), axis=1, keepdims=True))
 
 def dropout(x, drop_probability=.5):
     return x*srng.binomial(x.shape, p=1.-drop_probability, dtype=dtype)/drop_probability
@@ -83,7 +84,7 @@ class BatchNormalization(Pop):
 
         # TODO: Figure out if np.ones(n_in, dtype=dtype) is 
         # consistently worse for gamma
-        self.gamma = theano.shared(np.squeeze(sample_weights(1,n_in)))
+        self.gamma = theano.shared(np.ones(n_in, dtype=dtype))
         self.beta = theano.shared(np.zeros(n_in, dtype=dtype))
 
         self.params = [self.gamma, self.beta]

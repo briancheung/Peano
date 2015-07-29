@@ -7,6 +7,9 @@ def squared_hinge(y_true, y_pred):
 def cross_entropy(y_true, y_pred):
     return T.nnet.categorical_crossentropy(y_pred, y_true).mean()
 
+def cross_entropy_logdomain(y_true, log_y_pred):
+    return -(y_true*log_y_pred).mean()
+
 def mean_squared_error(y_true, y_pred):
     return 0.5*T.sqr(y_pred - y_true).mean()
 
