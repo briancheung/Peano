@@ -9,12 +9,12 @@ dtype = theano.config.floatX
 from theano.sandbox.rng_mrg import MRG_RandomStreams as RandomStreams
 srng = RandomStreams(seed=np.random.randint(10e6))
 
-def batch_normalize(x, epsilon=1e-6):
-    return (x - x.mean(-2, keepdims=True))/(x.std(-2, keepdims=True) + epsilon)
+def batch_normalize(x, epsilon=1e-6, batch_axis=-2):
+    return (x - x.mean(batch_axis, keepdims=True))/(x.std(batch_axis, keepdims=True) + epsilon)
 
-def logsoftmax(x):
-    xdev = x - x.max(axis=1, keepdims=True)
-    return xdev - T.log(T.sum(T.exp(xdev), axis=1, keepdims=True))
+def logsoftmax(x, feature_axis=-1):
+    xdev = x - x.max(axis=feature_axis, keepdims=True)
+    return xdev - T.log(T.sum(T.exp(xdev), axis=feature_axis, keepdims=True))
 
 def dropout(x, drop_probability=.5):
     return x*srng.binomial(x.shape, p=1.-drop_probability, dtype=dtype)/drop_probability
