@@ -13,6 +13,16 @@ def cross_entropy_logdomain(y_true, log_y_pred):
 def mean_squared_error(y_true, y_pred):
     return 0.5*T.sqr(y_pred - y_true).mean()
 
+def huber_loss(y_true, y_pred, delta=1.):
+    a = y_true - y_pred
+    squared_loss = 0.5*T.sqr(a)
+    absolute_loss = delta*T.abs(a) - 0.5*T.sqr(delta)
+
+    cost = T.switch(T.lt(T.abs(a), delta),
+                    squared_loss,
+                    absolute_loss)
+    return cost
+
 def misclass_error(y_true, y_pred):
     return T.neq(T.argmax(y_true, axis=1), T.argmax(y_pred, axis=1)).mean()
 
