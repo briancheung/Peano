@@ -76,3 +76,13 @@ def adam_update(params, gparams, alpha=0.001, b1=0.9, b2=0.999, epsilon=1e-8, l=
     learn_updates[t] = t_update
 
     return learn_updates
+
+def clip_gradients(gparams, threshold=5.):
+    clipped_gparams = []
+    for gparam in gparams:
+        norm_gparam = T.sqrt(T.sqr(gparam).sum())
+        clipped_gparams.append(T.switch(T.lt(norm_gparam, threshold),
+                                        gparam,
+                                        (gparam/norm_gparam)*threshold))
+
+    return clipped_gparams
