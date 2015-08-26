@@ -49,7 +49,7 @@ class RecurrentConv2D(Pop):
 
     def step(self, x_t, h_tm1):
         xWih = theano.sandbox.cuda.dnn.dnn_conv(x_t, self.W_ih, border_mode=self.border_mode, subsample=self.stride)
-        hWhh = theano.sandbox.cuda.dnn.dnn_conv(h_tm1, self.W_hh, border_mode=, stride=(1,1))
+        hWhh = theano.sandbox.cuda.dnn.dnn_conv(h_tm1, self.W_hh, border_mode=self.border_mode, stride=(1,1))
 
         h_t = self.activation_fn(xWih + hWhh + self.b_h.dimshuffle(0,'x','x'))
 

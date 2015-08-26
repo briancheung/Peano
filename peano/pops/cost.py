@@ -15,13 +15,13 @@ def mean_squared_error(y_true, y_pred, axis=None):
 
 def huber_loss(y_true, y_pred, delta=1., axis=None):
     a = y_true - y_pred
-    squared_loss = 0.5*T.sqr(a).mean(axis=axis)
-    absolute_loss = (delta*T.abs(a) - 0.5*T.sqr(delta)).mean(axis=axis)
+    squared_loss = 0.5*T.sqr(a)
+    absolute_loss = (delta*abs(a) - 0.5*T.sqr(delta))
 
-    cost = T.switch(T.lt(T.abs(a), delta),
+    cost = T.switch(T.le(abs(a), delta),
                     squared_loss,
                     absolute_loss)
-    return cost
+    return cost.mean(axis=axis)
 
 def misclass_error(y_true, y_pred, axis=None):
     return T.neq(T.argmax(y_true, axis=1), T.argmax(y_pred, axis=1)).mean(axis=axis)
