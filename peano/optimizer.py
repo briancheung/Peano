@@ -53,18 +53,16 @@ def adadelta_update(params, gparams, rho=.95, epsilon=1e-6):
 
     return learn_updates
 
-def adam_update(params, gparams, alpha=0.001, b1=0.9, b2=0.999, epsilon=1e-8, l=1.-1e-8):
+def adam_update(params, gparams, alpha=0.001, b1=0.9, b2=0.999, epsilon=1e-8):
     learn_updates = OrderedDict()
 
-    t = theano.shared(np.array(0.,dtype=dtype))
-    t_update = t + 1.
-    b1_t = b1*(l**(t-1.))
-    # Based on section 3 Initialization Bias Correction
-    b2_t = b2*(l**(t-1.))
+    t = theano.shared(np.array(1.,dtype=dtype))
+    b1_t = b1**t
+    b2_t = b2**t
     for p,g in zip(params, gparams):
         m = theano.shared((p.get_value()*0.).astype(dtype))
         v = theano.shared((p.get_value()*0.).astype(dtype))
-        m_update = b1_t*m + (1.-b1_t)*g 
+        m_update = b1*m + (1.-b1)*g 
         v_update = b2*v + (1.-b2)*T.sqr(g)
         m_hat = m_update/(1.-b1_t)
         v_hat = v_update/(1.-b2_t)
@@ -73,7 +71,7 @@ def adam_update(params, gparams, alpha=0.001, b1=0.9, b2=0.999, epsilon=1e-8, l=
         learn_updates[m] = m_update
         learn_updates[v] = v_update
         learn_updates[p] = p + dx
-    learn_updates[t] = t_update
+    learn_updates[t] = t + 1.
 
     return learn_updates
 
