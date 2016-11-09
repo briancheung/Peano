@@ -13,6 +13,14 @@ def cross_entropy_logdomain(y_true, log_y_pred, axis=None):
 def mean_squared_error(y_true, y_pred, axis=None):
     return 0.5*T.sqr(y_pred - y_true).mean(axis=axis)
 
+def normal_neg_log_likelihood(y_true, y_pred, log_std_dev, axis=None):
+    #This function assumes that the last dimension of y corresponds to
+    #the data dimensionality, and that log_std_dev.shape is the same as
+    #y_pred.shape with the last dimension removed.
+    exp_terms = 0.5*T.sum((y_pred - y_true)**2, axis=-1)/T.exp(2.*log_std_dev)
+    Z_terms = y_pred.shape[-1]*log_std_dev
+    return T.mean(exp_terms + Z_terms, axis=axis)
+
 def huber_loss(y_true, y_pred, delta=1., axis=None):
     a = y_true - y_pred
     squared_loss = 0.5*T.sqr(a)
