@@ -9,8 +9,14 @@ dtype = theano.config.floatX
 from theano.sandbox.rng_mrg import MRG_RandomStreams as RandomStreams
 srng = RandomStreams(seed=np.random.randint(10e6))
 
-def batch_normalize(x, epsilon=1e-6, batch_axis=-2):
-    return (x - x.mean(batch_axis, keepdims=True))/(x.std(batch_axis, keepdims=True) + epsilon)
+def normalize(x, axis, epsilon):
+    return (x - x.mean(axis, keepdims=True))/(x.std(axis, keepdims=True) + epsilon)
+
+def layer_normalize(x, layer_axis=1, epsilon=1e-5):
+    return normalize(x, layer_axis, epsilon)
+
+def batch_normalize(x, batch_axis=-2, epsilon=1e-6):
+    return normalize(x, batch_axis, epsilon)
 
 def logsoftmax(x, feature_axis=-1):
     xdev = x - x.max(axis=feature_axis, keepdims=True)
@@ -92,6 +98,19 @@ class BatchNormalization(Pop):
     def apply(self, x):
         # TODO: Find a better way to approximate means at test time
         x_n = batch_normalize(x, epsilon=self.epsilon)
+        return self.gamma*x_n + self.beta
+
+class LayerNormalization(Pop):
+    def __init__(self, n_in, epsilon=1e-5):
+        self.epsilon = epsilon
+
+        self.gamma = theano.shared(np.ones(n_in, dtype=dtype))
+        self.beta = theano.shared(np.zeros(n_in, dtype=dtype))
+
+        self.params = [self.gamma, self.beta]
+
+    def apply(self, x):
+        x_n = layer_normalize(x, epsilon=self.epsilon)
         return self.gamma*x_n + self.beta
 
 class Lateral(Pop):
